@@ -3,6 +3,6 @@
 public class SimpleMovingAverage
 {
     public int DataPointsAmount { get; set; }
-    public DataPointsInMinutes DataPointTimePeriod { get; set; }
+    public DataIntervalsInMilliseconds DataIntervalTimePeriod { get; set; }
     public DateTime? StartTime { get; set; }
 }

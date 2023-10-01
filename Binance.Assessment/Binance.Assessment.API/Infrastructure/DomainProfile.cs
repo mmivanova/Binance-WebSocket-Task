@@ -9,7 +9,8 @@ public class DomainProfile : Profile
 {
     public DomainProfile()
     {
-        CreateMap<SimpleMovingAverageRequest, SimpleMovingAverage>();
+        CreateMap<SimpleMovingAverageRequest, SimpleMovingAverage>()
+            .ForMember(dest => dest.DataIntervalTimePeriod, opt => opt.MapFrom(src => src.DataPointTimePeriod));
         CreateMap<AveragePrice, AveragePriceResponse>();
     }
 }

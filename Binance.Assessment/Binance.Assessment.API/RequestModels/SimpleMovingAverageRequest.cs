@@ -1,5 +1,7 @@
 ﻿using Binance.Assessment.API.Validation;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
+using Binance.Assessment.DomainModel;
 
 namespace Binance.Assessment.API.RequestModels;
 

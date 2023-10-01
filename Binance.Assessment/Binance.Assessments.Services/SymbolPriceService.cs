@@ -51,7 +51,7 @@ public class SymbolPriceService : ISymbolPriceService
         var times = new List<long> { endDate };
         for (var i = 1; i <= sma.DataPointsAmount - 1; i++)
         {
-            times.Add(endDate - ((int)sma.DataIntervalTimePeriod * 60000 * i) / 1000);
+            times.Add(endDate - (int)sma.DataIntervalTimePeriod * i);
         }
 
         return times;
