@@ -1,7 +1,7 @@
-﻿namespace Binance.Assessment.Repositories.Interfaces
+﻿namespace Binance.Assessment.Repositories.Interfaces;
+
+public interface ISymbolPriceRepository
 {
-    public interface ISymbolPriceRepository
-    {
-        Task<List<float>> GetPricesForTimeRange(int symbolId, DateTime startTime, DateTime endTime);
-    }
+    Task<IEnumerable<(float, long)>> GetPricesForTimeRange(int symbolId, long startTime, long endTime);
+    Task<IEnumerable<(float, long)>> GetClosePricesForTimeIntervals(int symbolId, IEnumerable<long> endTimesForEachInterval);
 }

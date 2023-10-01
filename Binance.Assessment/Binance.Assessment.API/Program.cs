@@ -1,4 +1,3 @@
-using Binance.Assessment.DomainModel;
 using Binance.Assessment.Repositories;
 using Binance.Assessment.Repositories.Interfaces;
 using Binance.Assessments.Services;
@@ -35,8 +34,13 @@ public class Program
 
     private static void BuildServices(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddControllers()
+        services.AddControllers(options =>
+            {
+                options.RespectBrowserAcceptHeader = true;
+            })
             .AddXmlSerializerFormatters();
+
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();

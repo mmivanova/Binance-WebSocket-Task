@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Binance.Spot" Version="4.0.0">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
@@ -18,10 +19,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Binance.Assessment.DomainModel\Binance.Assessment.DomainModel.csproj" />
     <ProjectReference Include="..\Binance.Assessments.Services\Binance.Assessments.Services.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ResponseModels\" />
   </ItemGroup>
 
 </Project>

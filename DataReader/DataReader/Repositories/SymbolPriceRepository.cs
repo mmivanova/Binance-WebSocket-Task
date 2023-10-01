@@ -26,7 +26,7 @@ namespace DataReader.Repositories
                 await using var cmd = _spanner.CreateInsertCommand(ClosePriceTableName, new SpannerParameterCollection
                 {
                     { SymbolIdColumnName, SpannerDbType.Int64, price.SymbolId },
-                    { TimeColumnName, SpannerDbType.Timestamp, price.Time },
+                    { TimeColumnName, SpannerDbType.Int64, price.Time },
                     { PriceColumnName, SpannerDbType.Float64, price.Price },
                 });
                 cmd.Transaction = transaction;

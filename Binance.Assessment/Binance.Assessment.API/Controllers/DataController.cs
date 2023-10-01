@@ -1,5 +1,8 @@
-﻿using Binance.Assessment.API.RequestModels;
+﻿using AutoMapper;
+using Binance.Assessment.API.RequestModels;
+using Binance.Assessment.API.ResponseModels;
 using Binance.Assessment.API.Validation;
+using Binance.Assessment.DomainModel;
 using Binance.Assessments.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,28 +14,31 @@ namespace Binance.Assessment.API.Controllers
     public class DataController : ControllerBase
     {
         private readonly ISymbolPriceService _symbolPriceService;
+        private readonly IMapper _mapper;
 
-        public DataController(ISymbolPriceService symbolPriceService)
+        public DataController(ISymbolPriceService symbolPriceService, IMapper mapper)
         {
             _symbolPriceService = symbolPriceService;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [Route("{symbol}/24hAvgPrice")]
         [ValidateSymbol]
-        public async Task<ActionResult<float>> Get24HAveragePrice(string symbol)
+        public async Task<ActionResult<AveragePriceResponse>> Get24HAveragePrice(string symbol)
         {
-            var prices = await _symbolPriceService.Get24HAverageForSymbol(symbol, DateTime.Now);
-            return Ok(prices);
+            var averagePrice = await _symbolPriceService.Get24HAverageForSymbol(symbol, DateTime.Now);
+            return Ok(_mapper.Map<AveragePriceResponse>(averagePrice));
         }
 
 
         [HttpGet]
         [Route("{symbol}/SimpleMovingAverage")]
         [ValidateSymbol]
-        public async Task<IActionResult> GetSimpleMovingAverage(string symbol, [FromQuery] SimpleMovingAverageRequest request)
+        public async Task<ActionResult<AveragePriceResponse>> GetSimpleMovingAverage(string symbol, [FromQuery] SimpleMovingAverageRequest request)
         {
-            return Ok();
+            var simpleMovingAverage = await _symbolPriceService.GetSimpleMovingAverage(symbol, _mapper.Map<SimpleMovingAverage>(request));
+            return Ok(_mapper.Map<AveragePriceResponse>(simpleMovingAverage));
         }
     }
 }

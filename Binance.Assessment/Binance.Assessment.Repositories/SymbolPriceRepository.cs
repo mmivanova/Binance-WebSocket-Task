@@ -1,7 +1,7 @@
-﻿using Binance.Assessment.DomainModel;
-using Binance.Assessment.Repositories.Interfaces;
+﻿using Binance.Assessment.Repositories.Interfaces;
 using Binance.Assessment.Repositories.Models;
 using Google.Cloud.Spanner.Data;
+using System.Text;
 
 namespace Binance.Assessment.Repositories;
 
@@ -14,41 +14,53 @@ public class SymbolPriceRepository : ISymbolPriceRepository
         _connection = connection;
     }
 
-    public async Task<List<SymbolPrice>> GetAll()
+    public async Task<IEnumerable<(float, long)>> GetPricesForTimeRange(int symbolId, long startTime, long endTime)
     {
-        var symbolPrices = new List<SymbolPrice>();
-        var cmd = _connection.CreateSelectCommand($"select * from {DatabaseConstants.ClosePrice1SecondTableName} limit 1000");
-        await using var reader = await cmd.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
-        {
-            var symbolPrice = new SymbolPrice
-            {
-                ClosePrice = reader.GetFieldValue<float>(DatabaseConstants.PriceColumnName),
-                ConsecutiveCounts = reader.GetFieldValue<int>(DatabaseConstants.ConsecutiveCountsColumnName),
-                SymbolId = reader.GetFieldValue<int>(DatabaseConstants.SymbolIdColumnName),
-                CloseTime = reader.GetFieldValue<DateTime>(DatabaseConstants.TimeColumnName)
-            };
+        var prices = new List<(float, long)>();
 
-            symbolPrices.Add(symbolPrice);
-        }
-
-        return symbolPrices;
+        var cmd = _connection.CreateSelectCommand(GenerateQueryFor24HAverage(symbolId, startTime, endTime));
+        return await ReadDataFromDatabase(cmd);
     }
 
-    public async Task<List<float>> GetPricesForTimeRange(int symbolId, DateTime startTime, DateTime endTime)
-    {
-        var prices = new List<float>();
-        var startTimeFormatted = startTime.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-        var endTimeFormatted = endTime.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
 
-        var cmd = _connection.CreateSelectCommand($"select price from {DatabaseConstants.ClosePrice1SecondTableName} where symbol_id = {symbolId} and time >= '{startTimeFormatted}' and time <= '{endTimeFormatted}'");
-        await using var reader = await cmd.ExecuteReaderAsync();
+    public async Task<IEnumerable<(float, long)>> GetClosePricesForTimeIntervals(int symbolId, IEnumerable<long> endTimesForEachInterval)
+    {
+        var prices = new List<(float, long)>();
+
+        var cmd = _connection.CreateSelectCommand(GenerateQueryForSimpleMa(symbolId, endTimesForEachInterval));
+        return await ReadDataFromDatabase(cmd);
+    }
+
+    private async Task<IEnumerable<(float, long)>> ReadDataFromDatabase(SpannerCommand command)
+    {
+        var prices = new List<(float, long)>();
+        await using var reader = await command.ExecuteReaderAsync();
         while (await reader.ReadAsync())
         {
-            prices.Add(reader.GetFieldValue<float>(DatabaseConstants.PriceColumnName));
+            var price = reader.GetFieldValue<float>(DatabaseConstants.PriceColumnName);
+            var time = reader.GetFieldValue<long>(DatabaseConstants.TimeColumnName);
+            prices.Add((price, time));
         }
 
         return prices;
     }
 
+    private string GenerateQueryForSimpleMa(int symbolId, IEnumerable<long> endTimesForEachInterval)
+    {
+        return new StringBuilder($"Select {DatabaseConstants.PriceColumnName}, {DatabaseConstants.TimeColumnName} " +
+                                 $"from {DatabaseConstants.ClosePrice1SecondTableName} " +
+                                 $"where {DatabaseConstants.SymbolIdColumnName} = {symbolId} " +
+                                 $"and {DatabaseConstants.TimeColumnName} in ( {string.Join(", ", endTimesForEachInterval)} )")
+            .ToString();
+    }
+
+    private string GenerateQueryFor24HAverage(int symbolId, long startTime, long endTime)
+    {
+        return new StringBuilder($"select {DatabaseConstants.PriceColumnName}, {DatabaseConstants.TimeColumnName} " +
+                                 $"from {DatabaseConstants.ClosePrice1SecondTableName} " +
+                                 $"where {DatabaseConstants.SymbolIdColumnName} = {symbolId} " +
+                                 $"and {DatabaseConstants.TimeColumnName} >= {startTime} " +
+                                 $"and {DatabaseConstants.TimeColumnName} <= {endTime}")
+            .ToString();
+    }
 }

@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Binance.Assessment.API.Validation;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Binance.Assessment.API.RequestModels;
-
 
 public class SimpleMovingAverageRequest
 {
@@ -9,8 +9,9 @@ public class SimpleMovingAverageRequest
     public int DataPointsAmount { get; set; }
 
     [BindProperty(Name = "p")]
-    public string DataPointTimePeriod { get; set; } //TODO make enum
+    [ValidateTimePeriod]
+    public string DataPointTimePeriod { get; set; }
 
     [BindProperty(Name = "s")]
-    public DateTime StartTime { get; set; }
+    public DateTime? StartTime { get; set; }
 }

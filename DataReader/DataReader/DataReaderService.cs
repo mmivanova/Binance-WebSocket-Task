@@ -29,7 +29,5 @@ public class DataReaderService : BackgroundService
             await _processor.ProcessDataAndSaveToDatabase(adaWebSocket, cancellationToken);
             await _processor.ProcessDataAndSaveToDatabase(ethWebSocket, cancellationToken);
         }
-
-        await _connector.Disconnect(cancellationToken, btcWebSocket, adaWebSocket, ethWebSocket);
     }
 }

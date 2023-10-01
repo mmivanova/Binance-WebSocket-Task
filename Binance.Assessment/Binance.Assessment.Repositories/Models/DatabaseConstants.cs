@@ -6,5 +6,4 @@ public static class DatabaseConstants
     public const string SymbolIdColumnName = "symbol_id";
     public const string TimeColumnName = "time";
     public const string PriceColumnName = "price";
-    public const string ConsecutiveCountsColumnName = "consecutive_counts";
 }
