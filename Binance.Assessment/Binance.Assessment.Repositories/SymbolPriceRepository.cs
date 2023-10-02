@@ -18,16 +18,15 @@ public class SymbolPriceRepository : ISymbolPriceRepository
     {
         var prices = new List<(float, long)>();
 
-        var cmd = _connection.CreateSelectCommand(GenerateQueryFor24HAverage(symbolId, startTime, endTime));
+        var cmd = GetCommandFor24HAverage(symbolId, startTime, endTime);
         return await ReadDataFromDatabase(cmd);
     }
-
 
     public async Task<IEnumerable<(float, long)>> GetClosePricesForTimeIntervals(int symbolId, IEnumerable<long> endTimesForEachInterval)
     {
         var prices = new List<(float, long)>();
 
-        var cmd = _connection.CreateSelectCommand(GenerateQueryForSimpleMa(symbolId, endTimesForEachInterval));
+        var cmd = GetCommandForSimpleMa(symbolId, endTimesForEachInterval);
         return await ReadDataFromDatabase(cmd);
     }
 
@@ -45,22 +44,44 @@ public class SymbolPriceRepository : ISymbolPriceRepository
         return prices;
     }
 
-    private string GenerateQueryForSimpleMa(int symbolId, IEnumerable<long> endTimesForEachInterval)
+    private SpannerCommand GetCommandForSimpleMa(int symbolId, IEnumerable<long> endTimesForEachInterval)
     {
-        return new StringBuilder($"Select {DatabaseConstants.PriceColumnName}, {DatabaseConstants.TimeColumnName} " +
+        var query = new StringBuilder($"Select {DatabaseConstants.PriceColumnName}, {DatabaseConstants.TimeColumnName} " +
                                  $"from {DatabaseConstants.ClosePrice1SecondTableName} " +
                                  $"where {DatabaseConstants.SymbolIdColumnName} = {symbolId} " +
                                  $"and {DatabaseConstants.TimeColumnName} in ( {string.Join(", ", endTimesForEachInterval)} )")
             .ToString();
+
+        //var command = _connection.CreateSelectCommand(query, new SpannerParameterCollection
+        //{
+        //    { $"{nameof(symbolId)}", SpannerDbType.Int64 },
+        //    { $"{nameof(endTimesForEachInterval)}", SpannerDbType.ArrayOf(SpannerDbType.Int64) }
+        //});
+        //command.Parameters[$"{nameof(symbolId)}"].Value = symbolId;
+        //command.Parameters[$"{nameof(endTimesForEachInterval)}"].Value = endTimesForEachInterval;
+
+        return _connection.CreateSelectCommand(query);
     }
 
-    private string GenerateQueryFor24HAverage(int symbolId, long startTime, long endTime)
+    private SpannerCommand GetCommandFor24HAverage(int symbolId, long startTime, long endTime)
     {
-        return new StringBuilder($"select {DatabaseConstants.PriceColumnName}, {DatabaseConstants.TimeColumnName} " +
-                                 $"from {DatabaseConstants.ClosePrice1SecondTableName} " +
-                                 $"where {DatabaseConstants.SymbolIdColumnName} = {symbolId} " +
-                                 $"and {DatabaseConstants.TimeColumnName} >= {startTime} " +
-                                 $"and {DatabaseConstants.TimeColumnName} <= {endTime}")
-            .ToString();
+        var query = new StringBuilder($"select {DatabaseConstants.PriceColumnName}, {DatabaseConstants.TimeColumnName} " +
+                          $"from {DatabaseConstants.ClosePrice1SecondTableName} " +
+                          $"where {DatabaseConstants.SymbolIdColumnName} = @{nameof(symbolId)} " +
+                          $"and {DatabaseConstants.TimeColumnName} >= @{nameof(startTime)} " +
+                          $"and {DatabaseConstants.TimeColumnName} <= @{nameof(endTime)}")
+                    .ToString();
+
+        var command = _connection.CreateSelectCommand(query, new SpannerParameterCollection
+        {
+            { $"{nameof(symbolId)}", SpannerDbType.Int64 },
+            { $"{nameof(startTime)}", SpannerDbType.Int64 },
+            { $"{nameof(endTime)}", SpannerDbType.Int64 }
+        });
+        command.Parameters[$"{nameof(symbolId)}"].Value = symbolId;
+        command.Parameters[$"{nameof(startTime)}"].Value = startTime;
+        command.Parameters[$"{nameof(endTime)}"].Value = endTime;
+
+        return command;
     }
 }

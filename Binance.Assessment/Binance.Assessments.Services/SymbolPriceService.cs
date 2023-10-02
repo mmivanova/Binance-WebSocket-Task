@@ -28,7 +28,7 @@ public class SymbolPriceService : ISymbolPriceService
     {
         var endDate = sma.StartTime ?? DateTime.Now;
         var symbolId = Enum.Parse(typeof(Symbol), symbol, true);
-        var timesToGetClosePricesFor = GetClosingTimesForEveryInterval(endDate.ToEpochMilliseconds(), sma);
+        var timesToGetClosePricesFor = GetClosingTimesForEveryInterval(endDate, sma);
 
         var pricesWithTimes = await _symbolPriceRepository.GetClosePricesForTimeIntervals((int)symbolId, timesToGetClosePricesFor);
 
@@ -46,12 +46,12 @@ public class SymbolPriceService : ISymbolPriceService
         return new AveragePrice(averagePrice, timePeriodStart, timePeriodEnd);
     }
 
-    private IEnumerable<long> GetClosingTimesForEveryInterval(long endDate, SimpleMovingAverage sma)
+    private IEnumerable<long> GetClosingTimesForEveryInterval(DateTime endDate, SimpleMovingAverage sma)
     {
-        var times = new List<long> { endDate };
+        var times = new List<long> { endDate.ToEpochMilliseconds() };
         for (var i = 1; i <= sma.DataPointsAmount - 1; i++)
         {
-            times.Add(endDate - (int)sma.DataIntervalTimePeriod * i);
+            times.Add(endDate.AddMinutes(-((int)sma.DataIntervalTimePeriod * i)).ToEpochMilliseconds());
         }
 
         return times;
