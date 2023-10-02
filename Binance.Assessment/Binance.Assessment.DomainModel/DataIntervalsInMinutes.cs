@@ -2,7 +2,7 @@
 
 namespace Binance.Assessment.DomainModel;
 
-public enum DataIntervalsInMilliseconds
+public enum DataIntervalsInMinutes
 {
     [EnumMember(Value = "1m")] _1m = 1,
     [EnumMember(Value = "5m")] _5m = 5,

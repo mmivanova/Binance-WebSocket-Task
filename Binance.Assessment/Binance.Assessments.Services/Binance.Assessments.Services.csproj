@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Binance.Spot" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
   </ItemGroup>
 

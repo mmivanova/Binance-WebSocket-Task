@@ -2,6 +2,7 @@
 using Binance.Assessment.Repositories.Interfaces;
 using Binance.Assessments.Services.Extensions;
 using Binance.Assessments.Services.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Binance.Assessments.Services;
 
@@ -9,7 +10,7 @@ public class SymbolPriceService : ISymbolPriceService
 {
     private readonly ISymbolPriceRepository _symbolPriceRepository;
 
-    public SymbolPriceService(ISymbolPriceRepository symbolPriceRepository)
+    public SymbolPriceService(ISymbolPriceRepository symbolPriceRepository, IMemoryCache cache)
     {
         _symbolPriceRepository = symbolPriceRepository;
     }
@@ -26,24 +27,22 @@ public class SymbolPriceService : ISymbolPriceService
 
     public async Task<AveragePrice> GetSimpleMovingAverage(string symbol, SimpleMovingAverage sma)
     {
-        var endDate = sma.StartTime ?? DateTime.Now;
+        var endTime = sma.StartTime ?? DateTime.Now;
         var symbolId = Enum.Parse(typeof(Symbol), symbol, true);
-        var timesToGetClosePricesFor = GetClosingTimesForEveryInterval(endDate, sma);
+        var timesToGetClosePricesFor = GetClosingTimesForEveryInterval(endTime, sma);
 
         var pricesWithTimes = await _symbolPriceRepository.GetClosePricesForTimeIntervals((int)symbolId, timesToGetClosePricesFor);
 
         return GetAveragePriceForPeriod(pricesWithTimes);
     }
 
-    private static AveragePrice GetAveragePriceForPeriod(IEnumerable<(float, long)> pricesWithTimes)
+    private AveragePrice GetAveragePriceForPeriod(IEnumerable<(float, long)> pricesWithTimes)
     {
         var averagePrice = pricesWithTimes.Select(p => p.Item1).Average();
-        var timePeriodStart = DateTimeOffset.FromUnixTimeMilliseconds(pricesWithTimes.Min(t => t.Item2)).DateTime
-            .ToLocalTime();
-        var timePeriodEnd = DateTimeOffset.FromUnixTimeMilliseconds(pricesWithTimes.Max(t => t.Item2)).DateTime
-            .ToLocalTime();
+        var timePeriodStart = DateTimeOffset.FromUnixTimeMilliseconds(pricesWithTimes.Min(t => t.Item2)).DateTime;
+        var timePeriodEnd = DateTimeOffset.FromUnixTimeMilliseconds(pricesWithTimes.Max(t => t.Item2)).DateTime;
 
-        return new AveragePrice(averagePrice, timePeriodStart, timePeriodEnd);
+        return new AveragePrice(averagePrice, timePeriodStart.ToLocalTime(), timePeriodEnd.ToLocalTime());
     }
 
     private IEnumerable<long> GetClosingTimesForEveryInterval(DateTime endDate, SimpleMovingAverage sma)
