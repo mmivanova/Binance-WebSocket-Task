@@ -67,20 +67,12 @@ public class SymbolPriceRepository : ISymbolPriceRepository
     {
         var query = new StringBuilder($"select {DatabaseConstants.PriceColumnName}, {DatabaseConstants.TimeColumnName} " +
                           $"from {DatabaseConstants.ClosePrice1SecondTableName} " +
-                          $"where {DatabaseConstants.SymbolIdColumnName} = @{nameof(symbolId)} " +
-                          $"and {DatabaseConstants.TimeColumnName} >= @{nameof(startTime)} " +
-                          $"and {DatabaseConstants.TimeColumnName} <= @{nameof(endTime)}")
+                          $"where {DatabaseConstants.SymbolIdColumnName} = {symbolId}" +
+                          $"and {DatabaseConstants.TimeColumnName} >= {startTime} " +
+                          $"and {DatabaseConstants.TimeColumnName} <= {endTime} ")
                     .ToString();
 
-        var command = _connection.CreateSelectCommand(query, new SpannerParameterCollection
-        {
-            { $"{nameof(symbolId)}", SpannerDbType.Int64 },
-            { $"{nameof(startTime)}", SpannerDbType.Int64 },
-            { $"{nameof(endTime)}", SpannerDbType.Int64 }
-        });
-        command.Parameters[$"{nameof(symbolId)}"].Value = symbolId;
-        command.Parameters[$"{nameof(startTime)}"].Value = startTime;
-        command.Parameters[$"{nameof(endTime)}"].Value = endTime;
+        var command = _connection.CreateSelectCommand(query);
 
         return command;
     }

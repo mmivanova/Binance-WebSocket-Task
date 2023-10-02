@@ -49,7 +49,7 @@ public class Program
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
-        services.AddSingleton(_ => new SpannerConnection(configuration.GetSection("CloudSpannerConnectionString").Value, GoogleCredential.FromFile("third-reporter-400608-ac462efd3c43.json")));
+        services.AddSingleton(_ => new SpannerConnection(configuration.GetSection("CloudSpannerConnectionString").Value, GoogleCredential.FromFile("..\\third-reporter-400608-ac462efd3c43.json")));
         services.AddSingleton<ISymbolPriceRepository, SymbolPriceRepository>();
         services.AddSingleton<ISymbolPriceService, SymbolPriceService>();
 

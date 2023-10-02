@@ -2,7 +2,6 @@
 using Binance.Assessment.Repositories.Interfaces;
 using Binance.Assessments.Services.Extensions;
 using Binance.Assessments.Services.Interfaces;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace Binance.Assessments.Services;
 
@@ -10,7 +9,7 @@ public class SymbolPriceService : ISymbolPriceService
 {
     private readonly ISymbolPriceRepository _symbolPriceRepository;
 
-    public SymbolPriceService(ISymbolPriceRepository symbolPriceRepository, IMemoryCache cache)
+    public SymbolPriceService(ISymbolPriceRepository symbolPriceRepository)
     {
         _symbolPriceRepository = symbolPriceRepository;
     }

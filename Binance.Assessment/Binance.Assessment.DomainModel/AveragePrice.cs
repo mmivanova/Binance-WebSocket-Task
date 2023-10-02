@@ -12,4 +12,9 @@ public class AveragePrice
         StartTime = startTime;
         EndTime = endTime;
     }
+
+    public override string ToString()
+    {
+        return $"The average price for the period from {StartTime} to {EndTime} is {Price}";
+    }
 }
