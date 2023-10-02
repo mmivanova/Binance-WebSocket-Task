@@ -10,7 +10,7 @@ public class CachedSymbolPriceService : ISymbolPriceService
     private const string SimpleMovingAverageCachePrefix = "24H_AP_";
 
     private readonly ISymbolPriceService _symbolPriceService;
-    private IMemoryCache _cache;
+    private readonly IMemoryCache _cache;
 
     public CachedSymbolPriceService(ISymbolPriceService symbolPriceService, IMemoryCache cache)
     {
