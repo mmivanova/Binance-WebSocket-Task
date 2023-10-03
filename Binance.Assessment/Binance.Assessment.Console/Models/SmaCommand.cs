@@ -1,4 +1,5 @@
 ﻿using Binance.Assessment.DomainModel;
+using System.Globalization;
 
 namespace Binance.Assessment.Console.Models;
 
@@ -18,9 +19,9 @@ public class SmaCommand : Command, ICommand
 
     private static int ValidateAndExtractDataPointsAmount(IReadOnlyList<string> elements)
     {
-        if (!int.TryParse(elements[2], out var dataPoint))
+        if (!int.TryParse(elements[2], out var dataPoint) && dataPoint is <= 0 or > 1000)
         {
-            throw new ArgumentException("Wrong data point amount in the command! Should be an integer bigger than 1 and less than 1000");
+            throw new ArgumentException("Wrong data point amount in the command! Should be an integer bigger than 0 and less than 1000");
         }
 
         return dataPoint;
@@ -40,7 +41,7 @@ public class SmaCommand : Command, ICommand
     {
         if (elements.Count < 5) return null;
 
-        if (!DateTime.TryParse(elements[4], out var date))
+        if (!DateTime.TryParseExact(elements[5], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
         {
             throw new ArgumentException("Invalid Date format");
         }

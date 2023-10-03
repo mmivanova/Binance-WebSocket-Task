@@ -2,6 +2,7 @@
 using Binance.Assessment.Repositories.Interfaces;
 using Binance.Assessments.Services.Extensions;
 using Binance.Assessments.Services.Interfaces;
+using Google.Api.Gax.Grpc;
 
 namespace Binance.Assessments.Services;
 
@@ -27,7 +28,10 @@ public class SymbolPriceService : ISymbolPriceService
 
     public async Task<AveragePrice> GetSimpleMovingAverage(string symbol, SimpleMovingAverage sma)
     {
-        var endTime = sma.StartTime ?? DateTime.Now;
+        var endTime = sma.StartTime.HasValue 
+            ? sma.StartTime!.Value.ToDateTime(new TimeOnly())
+            : DateTime.Now.Date;
+
         var symbolId = Enum.Parse(typeof(Symbol), symbol, true);
         var timesToGetClosePricesFor = GetClosingTimesForEveryInterval(endTime, sma);
 

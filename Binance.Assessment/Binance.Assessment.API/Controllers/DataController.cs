@@ -23,6 +23,13 @@ public class DataController : ControllerBase
         _mapper = mapper;
     }
 
+    /// <summary>
+    /// Get the average price for the last 24 hours for the specified symbol
+    /// </summary>
+    /// <param name="symbol">*Case-sensitive* The ticker of the crypto - "BTCUSDT", "ADAUSDT", "ETHUSDT"</param>
+    /// <returns>AveragePriceResponse object</returns>
+    /// <response code="200">Success, returns the calculated average price</response>
+    /// <response code="400">The symbol was not in the correct format or is not supported. </response>
     [HttpGet]
     [Route("{symbol}/24hAvgPrice")]
     [ValidateSymbol]
@@ -32,7 +39,14 @@ public class DataController : ControllerBase
         return Ok(_mapper.Map<AveragePriceResponse>(averagePrice));
     }
 
-
+    /// <summary>
+    /// Get the Simple Moving Average for the specified symbol
+    /// </summary>
+    /// <param name="symbol">*Case-sensitive* The ticker of the crypto - "BTCUSDT", "ADAUSDT", "ETHUSDT"</param>
+    /// <param name="request">The data points </param>
+    /// <returns>AveragePriceResponse object</returns>
+    /// <response code="200">Success, returns the calculated SMA</response>
+    /// <response code="400">One or more validations failed. A meaningful message will be displayed.</response>
     [HttpGet]
     [Route("{symbol}/SimpleMovingAverage")]
     [ValidateSymbol]

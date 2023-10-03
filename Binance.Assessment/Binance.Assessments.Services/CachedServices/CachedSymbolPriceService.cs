@@ -19,6 +19,12 @@ public class CachedSymbolPriceService : ISymbolPriceService
         _cache = cache;
     }
 
+    /// <summary>
+    /// Tries to get data for the specified symbol and end time from the cache, and if it is not successful, it invokes the actual implementation
+    /// </summary>
+    /// <param name="symbol">The name of the symbol</param>
+    /// <param name="endTime">The time from which to start the calculations</param>
+    /// <returns>AveragePrice object</returns>
     public async Task<AveragePrice> Get24HAverageForSymbol(string symbol, DateTime endTime)
     {
         if (_cache.TryGetValue($"{TwentyFourHoursAveragePriceCachePrefix}_{symbol}_{endTime}", out AveragePrice? averagePrice))
@@ -32,6 +38,12 @@ public class CachedSymbolPriceService : ISymbolPriceService
         return averagePrice;
     }
 
+    /// <summary>
+    /// Tries to get data for the SMA of a specified symbol from the cache, and if it is not successful, it invokes the actual implementation
+    /// </summary>
+    /// <param name="symbol">The name of the symbol</param>
+    /// <param name="request">The SMA characteristics</param>
+    /// <returns>AveragePrice object</returns>
     public async Task<AveragePrice> GetSimpleMovingAverage(string symbol, SimpleMovingAverage request)
     {
         var cacheKey = $"{SimpleMovingAverageCachePrefix}_{symbol}_{request.DataIntervalTimePeriod}_{request.DataPointsAmount}_{request.StartTime}";
