@@ -7,6 +7,9 @@ using Google.Cloud.Spanner.Data;
 
 namespace Binance.Assessment.Console;
 
+/// <summary>
+/// Connects to the SymbolPriceService
+/// </summary>
 public static class ServiceHelper
 {
     private static readonly SymbolPriceRepository Repository = new(new SpannerConnection(
@@ -15,6 +18,12 @@ public static class ServiceHelper
 
     private static readonly SymbolPriceService Service = new(Repository);
 
+    /// <summary>
+    /// Fetches the correct information based on the method of the command
+    /// </summary>
+    /// <param name="command">The user command</param>
+    /// <returns>the appropriately calculated average price</returns>
+    /// <exception cref="NotSupportedException"></exception>
     public static async Task<AveragePrice> GetAveragePriceForCommand(ICommand command)
     {
         switch (command.Method)

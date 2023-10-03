@@ -5,6 +5,12 @@ namespace Binance.Assessment.API.Validation;
 
 public class ValidateTimePeriodAttribute : ValidationAttribute
 {
+    /// <summary>
+    /// Validates that the time interval is supported
+    /// </summary>
+    /// <param name="value">the time interval</param>
+    /// <param name="validationContext"></param>
+    /// <returns>Success or throws ValidationResult exception</returns>
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
         var timePeriod = value as string;

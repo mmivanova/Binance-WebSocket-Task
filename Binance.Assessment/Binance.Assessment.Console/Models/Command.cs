@@ -1,5 +1,8 @@
 ﻿namespace Binance.Assessment.Console.Models;
 
+/// <summary>
+/// Abstract class with base functionality of the command object
+/// </summary>
 public abstract class Command
 {
     public string Method { get; }
@@ -17,6 +20,12 @@ public abstract class Command
         Symbol = ValidateAndSetSymbol(elements);
     }
 
+    /// <summary>
+    /// Validates that the first argument of the command is with the correct value of '24h' or 'sma'
+    /// </summary>
+    /// <param name="elements">the user command arguments</param>
+    /// <returns>The method name</returns>
+    /// <exception cref="ArgumentException"></exception>
     private static string ValidateAndSetMethod(IReadOnlyList<string> elements)
     {
         if (DomainModel.Constants.CommandMethods.Contains(elements[0]))
@@ -27,6 +36,12 @@ public abstract class Command
         return elements[0];
     }
 
+    /// <summary>
+    /// Validates that the second argument of the command is the correctly written symbol name
+    /// </summary>
+    /// <param name="elements">the user command arguments</param>
+    /// <returns>The symbol</returns>
+    /// <exception cref="ArgumentException"></exception>
     private static string ValidateAndSetSymbol(IReadOnlyList<string> elements)
     {
         if (DomainModel.Constants.Tickers.Contains(elements[0]))

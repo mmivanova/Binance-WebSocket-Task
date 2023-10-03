@@ -6,6 +6,10 @@ namespace Binance.Assessment.API.Validation;
 
 public class ValidateSymbolAttribute : ActionFilterAttribute
 {
+    /// <summary>
+    /// Validates that the symbol is in supported and all upper case
+    /// </summary>
+    /// <param name="context"></param>
     public override void OnActionExecuting(ActionExecutingContext context)
     {
         var symbol = context.ActionArguments["symbol"] as string;

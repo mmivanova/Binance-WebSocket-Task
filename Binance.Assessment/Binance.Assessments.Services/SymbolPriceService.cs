@@ -28,7 +28,7 @@ public class SymbolPriceService : ISymbolPriceService
 
     public async Task<AveragePrice> GetSimpleMovingAverage(string symbol, SimpleMovingAverage sma)
     {
-        var endTime = sma.StartTime.HasValue 
+        var endTime = sma.StartTime.HasValue
             ? sma.StartTime!.Value.ToDateTime(new TimeOnly())
             : DateTime.Now.Date;
 

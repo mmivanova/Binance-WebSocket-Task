@@ -3,6 +3,9 @@ using System.Globalization;
 
 namespace Binance.Assessment.Console.Models;
 
+/// <summary>
+/// Simple moving average command object
+/// </summary>
 public class SmaCommand : Command, ICommand
 {
     public int DataPointsAmount { get; set; }
@@ -17,6 +20,12 @@ public class SmaCommand : Command, ICommand
         StartTime = ValidateAndExtractStartTime(elements);
     }
 
+    /// <summary>
+    /// Validates that the third argument of the command is a valid data points amount number
+    /// </summary>
+    /// <param name="elements">the user command arguments</param>
+    /// <returns>The data points amount</returns>
+    /// <exception cref="ArgumentException"></exception>
     private static int ValidateAndExtractDataPointsAmount(IReadOnlyList<string> elements)
     {
         if (!int.TryParse(elements[2], out var dataPoint) && dataPoint is <= 0 or > 1000)
@@ -27,6 +36,12 @@ public class SmaCommand : Command, ICommand
         return dataPoint;
     }
 
+    /// <summary>
+    /// Validates that the fourth argument of the command is a valid time interval
+    /// </summary>
+    /// <param name="elements">the user command arguments</param>
+    /// <returns>The time interval</returns>
+    /// <exception cref="ArgumentException"></exception>
     private static DataIntervalsInMinutes ValidateAndExtractTimeInterval(IReadOnlyList<string> elements)
     {
         if (!Enum.TryParse(elements[3], out DataIntervalsInMinutes dataInterval))
@@ -37,6 +52,12 @@ public class SmaCommand : Command, ICommand
         return dataInterval;
     }
 
+    /// <summary>
+    /// Validates that if there is a fifth argument in the command, it is a valid date
+    /// </summary>
+    /// <param name="elements">the user command arguments</param>
+    /// <returns>The date from which to start the calculations</returns>
+    /// <exception cref="ArgumentException"></exception>
     private static DateTime? ValidateAndExtractStartTime(IReadOnlyList<string> elements)
     {
         if (elements.Count < 5) return null;

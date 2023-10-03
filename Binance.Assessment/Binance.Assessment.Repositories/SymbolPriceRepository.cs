@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Binance.Assessment.Repositories;
 
+/// <summary>
+/// Establishes a connection to the Cloud Spanner Database
+/// </summary>
 public class SymbolPriceRepository : ISymbolPriceRepository
 {
     private readonly SpannerConnection _connection;
@@ -14,18 +17,27 @@ public class SymbolPriceRepository : ISymbolPriceRepository
         _connection = connection;
     }
 
+    /// <summary>
+    /// Gets the prices with their time of occurrence for a specified symbol between the two dates
+    /// </summary>
+    /// <param name="symbolId">Id of the symbol</param>
+    /// <param name="startTime">From when to start collecting the data</param>
+    /// <param name="endTime">The current point in time</param>
+    /// <returns>Task&lt;IEnumerable&lt;(float, long)&gt;&gt;</returns>
     public async Task<IEnumerable<(float, long)>> GetPricesForTimeRange(int symbolId, long startTime, long endTime)
     {
-        var prices = new List<(float, long)>();
-
         var cmd = GetCommandFor24HAverage(symbolId, startTime, endTime);
         return await ReadDataFromDatabase(cmd);
     }
 
+    /// <summary>
+    /// Gets the prices with their time of occurrence for a specified symbol between the two dates
+    /// </summary>
+    /// <param name="symbolId">Id of the symbol</param>
+    /// <param name="endTimesForEachInterval">The time which to get the closing price for</param>
+    /// <returns>Task&lt;IEnumerable&lt;(float, long)&gt;&gt;</returns>
     public async Task<IEnumerable<(float, long)>> GetClosePricesForTimeIntervals(int symbolId, IEnumerable<long> endTimesForEachInterval)
     {
-        var prices = new List<(float, long)>();
-
         var cmd = GetCommandForSimpleMa(symbolId, endTimesForEachInterval);
         return await ReadDataFromDatabase(cmd);
     }
