@@ -1,4 +1,4 @@
-# Binance-WebSocket-Task# Binance-WebSocket-Task
+# Binance-WebSocket-Task
 
 # Table of contents
 1. [Goal and Purpose of the application](#goal-and-purpose-of-the-application)
