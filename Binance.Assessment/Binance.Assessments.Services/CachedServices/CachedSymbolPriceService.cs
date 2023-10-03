@@ -4,10 +4,11 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Binance.Assessments.Services.CachedServices;
 
+//TODO Extend caching logic
 public class CachedSymbolPriceService : ISymbolPriceService
 {
     private const string TwentyFourHoursAveragePriceCachePrefix = "24H_AP_";
-    private const string SimpleMovingAverageCachePrefix = "24H_AP_";
+    private const string SimpleMovingAverageCachePrefix = "SMA_AP_";
 
     private readonly ISymbolPriceService _symbolPriceService;
     private readonly IMemoryCache _cache;

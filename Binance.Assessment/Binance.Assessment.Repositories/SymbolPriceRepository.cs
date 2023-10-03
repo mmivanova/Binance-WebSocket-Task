@@ -44,6 +44,7 @@ public class SymbolPriceRepository : ISymbolPriceRepository
         return prices;
     }
 
+    //TODO update query to use a query parameters instead of plain text
     private SpannerCommand GetCommandForSimpleMa(int symbolId, IEnumerable<long> endTimesForEachInterval)
     {
         var query = new StringBuilder($"Select {DatabaseConstants.PriceColumnName}, {DatabaseConstants.TimeColumnName} " +
@@ -52,17 +53,10 @@ public class SymbolPriceRepository : ISymbolPriceRepository
                                  $"and {DatabaseConstants.TimeColumnName} in ( {string.Join(", ", endTimesForEachInterval)} )")
             .ToString();
 
-        //var command = _connection.CreateSelectCommand(query, new SpannerParameterCollection
-        //{
-        //    { $"{nameof(symbolId)}", SpannerDbType.Int64 },
-        //    { $"{nameof(endTimesForEachInterval)}", SpannerDbType.ArrayOf(SpannerDbType.Int64) }
-        //});
-        //command.Parameters[$"{nameof(symbolId)}"].Value = symbolId;
-        //command.Parameters[$"{nameof(endTimesForEachInterval)}"].Value = endTimesForEachInterval;
-
         return _connection.CreateSelectCommand(query);
     }
 
+    //TODO update query to use a query parameters instead of plain text
     private SpannerCommand GetCommandFor24HAverage(int symbolId, long startTime, long endTime)
     {
         var query = new StringBuilder($"select {DatabaseConstants.PriceColumnName}, {DatabaseConstants.TimeColumnName} " +

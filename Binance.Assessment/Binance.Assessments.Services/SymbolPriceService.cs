@@ -5,6 +5,7 @@ using Binance.Assessments.Services.Interfaces;
 
 namespace Binance.Assessments.Services;
 
+//TODO Add unit testing for the service
 public class SymbolPriceService : ISymbolPriceService
 {
     private readonly ISymbolPriceRepository _symbolPriceRepository;
