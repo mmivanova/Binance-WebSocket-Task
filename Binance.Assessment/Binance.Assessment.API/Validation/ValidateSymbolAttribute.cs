@@ -1,4 +1,4 @@
-﻿using Binance.Assessment.API.Infrastructure;
+﻿using Binance.Assessment.DomainModel;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 

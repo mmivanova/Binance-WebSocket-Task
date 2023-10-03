@@ -10,7 +10,7 @@ public class SmaCommand : Command, ICommand
 
     public SmaCommand(string? input) : base(input)
     {
-        var elements = input.Split(' ');
+        var elements = input!.Split(' ');
         DataPointsAmount = ValidateAndExtractDataPointsAmount(elements);
         TimeInterval = ValidateAndExtractTimeInterval(elements);
         StartTime = ValidateAndExtractStartTime(elements);
@@ -30,7 +30,7 @@ public class SmaCommand : Command, ICommand
     {
         if (!Enum.TryParse(elements[3], out DataIntervalsInMinutes dataInterval))
         {
-            throw new ArgumentException("Wrong time interval in the command! Should be '1m', '5m', '30m', '1d' or '1w' ");
+            throw new ArgumentException($"Wrong time interval in the command! Should be one of the following {DomainModel.Constants.TimeIntervals}");
         }
 
         return dataInterval;

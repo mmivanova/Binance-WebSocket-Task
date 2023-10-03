@@ -7,7 +7,7 @@ public abstract class Command
 
     protected Command(string? input)
     {
-        var elements = input.Split(' ');
+        var elements = input!.Split(' ');
         if (elements.Length != 2 && elements.Length != 4 && elements.Length != 5)
         {
             throw new ArgumentException("Wrong number of arguments in the command!");
@@ -19,9 +19,9 @@ public abstract class Command
 
     private static string ValidateAndSetMethod(IReadOnlyList<string> elements)
     {
-        if (elements[0] != "24h" && elements[0] != "sma")
+        if (DomainModel.Constants.CommandMethods.Contains(elements[0]))
         {
-            throw new ArgumentException("Wrong method name in the command! Should be '24h' or 'sma' ");
+            throw new ArgumentException($"Wrong method name in the command! Should be one of the following {DomainModel.Constants.CommandMethods}");
         }
 
         return elements[0];
@@ -29,9 +29,9 @@ public abstract class Command
 
     private static string ValidateAndSetSymbol(IReadOnlyList<string> elements)
     {
-        if (elements[1] != "BTCUSDT" && elements[1] != "ADAUSDT" && elements[1] != "ETHUSDT")
+        if (DomainModel.Constants.Tickers.Contains(elements[0]))
         {
-            throw new ArgumentException("Wrong symbol in the command! Should be 'BTCUSDT', 'ADAUSDT' or 'ETHUSDT' ");
+            throw new ArgumentException($"Wrong symbol in the command! Should be one of the following {DomainModel.Constants.Tickers}");
         }
 
         return elements[1];

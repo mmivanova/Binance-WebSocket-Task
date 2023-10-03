@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Binance.Assessment.API.Infrastructure;
+using Binance.Assessment.DomainModel;
 
 namespace Binance.Assessment.API.Validation;
 
@@ -9,8 +9,8 @@ public class ValidateTimePeriodAttribute : ValidationAttribute
     {
         var timePeriod = value as string;
 
-        return Constants.DataPoints.Contains(timePeriod)
+        return Constants.TimeIntervals.Contains(timePeriod)
             ? ValidationResult.Success
-            : new ValidationResult($"Time period must be one of the following: {string.Join(", ", Constants.DataPoints)}");
+            : new ValidationResult($"Time period must be one of the following: {string.Join(", ", Constants.TimeIntervals)}");
     }
 }
