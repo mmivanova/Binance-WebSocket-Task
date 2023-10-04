@@ -62,11 +62,11 @@ public class SmaCommand : Command, ICommand
     {
         if (elements.Count < 5) return null;
 
-        if (!DateTime.TryParseExact(elements[5], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+        if (!DateOnly.TryParseExact(elements[5], "yyyy-MM-dd", out var dateOnly))
         {
             throw new ArgumentException("Invalid Date format");
         }
 
-        return date;
+        return dateOnly.ToDateTime(new TimeOnly());
     }
 }
